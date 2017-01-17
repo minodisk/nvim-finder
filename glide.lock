@@ -1,0 +1,10 @@
+hash: 23e7404381b083571dff3f53dca359967b838f8689ca87d4c10e2133c3a28c49
+updated: 2017-01-17T11:28:35.339477311+09:00
+imports:
+- name: github.com/myitcv/neovim
+  version: f91850c88863d096625cbe7bf40a1ba60d61f0d3
+- name: github.com/neovim/go-client
+  version: b4d0001757af5980b20bf246e900b9b0976a0a00
+  subpackages:
+  - nvim/plugin
+testImports: []

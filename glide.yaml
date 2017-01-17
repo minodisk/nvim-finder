@@ -1,0 +1,6 @@
+package: github.com/minodisk/filer
+import:
+- package: github.com/neovim/go-client
+  subpackages:
+  - nvim/plugin
+- package: github.com/myitcv/neovim
