@@ -163,7 +163,7 @@ func (f *Finder) Up() error {
 	if err != nil {
 		return err
 	}
-	if err := f.tree.UpAt(p.X); err != nil {
+	if err := f.tree.UpAt(p.Y()); err != nil {
 		return err
 	}
 	return f.Render()
@@ -174,7 +174,7 @@ func (f *Finder) Down() error {
 	if err != nil {
 		return err
 	}
-	if err := f.tree.DownAt(p.X); err != nil {
+	if err := f.tree.DownAt(p.Y()); err != nil {
 		return err
 	}
 	return f.Render()
@@ -205,7 +205,7 @@ func (f *Finder) Toggle() error {
 	if err != nil {
 		return err
 	}
-	if err := f.tree.ToggleAt(p.X); err != nil {
+	if err := f.tree.ToggleAt(p.Y()); err != nil {
 		return err
 	}
 	return f.Render()
@@ -216,7 +216,7 @@ func (f *Finder) ToggleRec() error {
 	if err != nil {
 		return err
 	}
-	if err := f.tree.ToggleRecAt(p.X); err != nil {
+	if err := f.tree.ToggleRecAt(p.Y()); err != nil {
 		return err
 	}
 	return f.Render()
@@ -231,7 +231,7 @@ func (f *Finder) CreateDir() error {
 	if err != nil {
 		return err
 	}
-	if err := f.tree.CreateDirAt(p.X, names...); err != nil {
+	if err := f.tree.CreateDirAt(p.Y(), names...); err != nil {
 		return err
 	}
 	return f.Render()
@@ -246,7 +246,7 @@ func (f *Finder) CreateFile() error {
 	if err != nil {
 		return err
 	}
-	if err := f.tree.CreateFileAt(p.X, names...); err != nil {
+	if err := f.tree.CreateFileAt(p.Y(), names...); err != nil {
 		return err
 	}
 	return f.Render()
@@ -257,7 +257,7 @@ func (f *Finder) Rename() error {
 	if err != nil {
 		return err
 	}
-	o, ok := f.tree.IndexOf(p.X)
+	o, ok := f.tree.IndexOf(p.Y())
 	if !ok {
 		//
 	}
@@ -279,7 +279,15 @@ func (f *Finder) Select() error {
 	if err != nil {
 		return err
 	}
-	if err := f.tree.ToggleSelectedAt(p.X); err != nil {
+	y := p.Y()
+	selected, err := f.tree.ToggleSelectedAt(y)
+	if err != nil {
+		return err
+	}
+	if selected {
+		p.SetY(y + 1)
+	}
+	if err := f.buffer.SetCurrentCursor(p); err != nil {
 		return err
 	}
 	return f.Render()
@@ -301,7 +309,7 @@ func (f *Finder) Move() error {
 	if err != nil {
 		return err
 	}
-	o, ok := f.tree.IndexOf(p.X)
+	o, ok := f.tree.IndexOf(p.Y())
 	if !ok {
 		//
 	}
@@ -309,7 +317,7 @@ func (f *Finder) Move() error {
 	if err != nil {
 		return err
 	}
-	if err := f.tree.MoveAt(p.X, path); err != nil {
+	if err := f.tree.MoveAt(p.Y(), path); err != nil {
 		return err
 	}
 	return f.Render()
@@ -335,7 +343,7 @@ func (f *Finder) Remove() error {
 	if err != nil {
 		return err
 	}
-	o, ok := f.tree.IndexOf(p.X)
+	o, ok := f.tree.IndexOf(p.Y())
 	if !ok {
 		//
 	}
