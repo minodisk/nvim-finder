@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"runtime"
 
 	"github.com/minodisk/go-nvim/buffer"
 	"github.com/minodisk/go-nvim/nvim"
@@ -34,19 +33,12 @@ type Finder struct {
 func New(v *nvim.Nvim) (*Finder, error) {
 	f := &Finder{nvim: v}
 
-	cw, err := v.CurrentBufferName()
-	if err == nil {
-		cw = filepath.Dir(cw)
-	} else {
-		cw, err = homeDir()
-		if err != nil {
-			cw = "/"
-		}
-	}
+	cw := v.NearestDirectory()
 
 	{
 		var err error
 		f.tree, err = tree.New(cw, tree.ConfigDefault)
+		v.Printf("New: %v, %v\n", f.tree, err)
 		if err != nil {
 			return f, err
 		}
@@ -115,6 +107,18 @@ func New(v *nvim.Nvim) (*Finder, error) {
 	return f, nil
 }
 
+func (f *Finder) Valid() bool {
+	bv, err := f.buffer.Valid()
+	if err != nil {
+		return false
+	}
+	wv, err := f.window.Valid()
+	if err != nil {
+		return false
+	}
+	return bv && wv
+}
+
 // func (f *Finder) OnChanged(o tree.Operator) {
 // 	f.Render()
 // }
@@ -148,12 +152,9 @@ func (f *Finder) Close() error {
 }
 
 func (f *Finder) Render() error {
-	// if err := f.tree.Scan(); err != nil {
-	// 	return err
-	// }
-	var mem runtime.MemStats
-	runtime.ReadMemStats(&mem)
-	f.nvim.Printf("rendered (%droutines, %dbytes, %dallocs, %dtallocs)\n", runtime.NumGoroutine(), mem.HeapAlloc, mem.Alloc, mem.TotalAlloc)
+	// var mem runtime.MemStats
+	// runtime.ReadMemStats(&mem)
+	// f.nvim.Printf("rendered (%droutines, %dbytes, %dallocs, %dtallocs)\n", runtime.NumGoroutine(), mem.HeapAlloc, mem.Alloc, mem.TotalAlloc)
 	return f.buffer.Write(f.tree.Lines())
 }
 

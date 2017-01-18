@@ -47,7 +47,7 @@ func handle(v *cnvim.Nvim, args []string) error {
 	}
 	switch c {
 	case CommandInit:
-		return nocmd(v)
+		return _init(v)
 	case CommandUp:
 		return up(v)
 	case CommandDown:
@@ -73,8 +73,8 @@ func handle(v *cnvim.Nvim, args []string) error {
 	}
 }
 
-func nocmd(v *cnvim.Nvim) error {
-	if finder != nil {
+func _init(v *cnvim.Nvim) error {
+	if finder != nil && finder.Valid() {
 		if err := finder.Close(); err != nil {
 			return err
 		}

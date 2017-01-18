@@ -7,7 +7,7 @@ endif
 let g:finder_finder = 1
 
 function! s:Requirefinder(host) abort
-  return jobstart(['./plugin/finder/bin/finder'], {'rpc': v:true})
+  return jobstart(['./rplugin/finder/bin/finder'], {'rpc': v:true})
 endfunction
 
 call remote#host#Register('finder', 'x', function('s:Requirefinder'))
