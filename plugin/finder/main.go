@@ -3,14 +3,13 @@ package main
 import (
 	"errors"
 
-	vfinder "github.com/minodisk/vim-finder/finder"
-	"github.com/minodisk/vim-finder/nvim"
+	"github.com/minodisk/go-nvim/nvim"
 	cnvim "github.com/neovim/go-client/nvim"
 	cplugin "github.com/neovim/go-client/nvim/plugin"
 )
 
 var (
-	finder *vfinder.Finder
+	finder *Finder
 )
 
 func main() {
@@ -83,7 +82,7 @@ func nocmd(v *cnvim.Nvim) error {
 		return nil
 	}
 	var err error
-	finder, err = vfinder.New(nvim.New(v))
+	finder, err = New(nvim.New(v))
 	if err != nil {
 		return err
 	}
