@@ -11,7 +11,7 @@ function! s:Requirefinder(host) abort
 endfunction
 
 call remote#host#Register('finder', 'x', function('s:Requirefinder'))
-call remote#host#RegisterPlugin('finder', 'finder', [
+call remote#host#RegisterPlugin('finder', '0', [
     \ {'type': 'command', 'name': 'Finder', 'sync': 1, 'opts': {'nargs': '?'}},
     \ ])
 
