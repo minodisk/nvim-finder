@@ -38,7 +38,6 @@ func New(v *nvim.Nvim) (*Finder, error) {
 	{
 		var err error
 		f.tree, err = tree.New(cw, tree.ConfigDefault)
-		v.Printf("New: %v, %v\n", f.tree, err)
 		if err != nil {
 			return f, err
 		}
@@ -100,7 +99,7 @@ func New(v *nvim.Nvim) (*Finder, error) {
 	if err := f.tree.Open(); err != nil {
 		return f, err
 	}
-	if err := f.Render(); err != nil {
+	if err := f.Render(false); err != nil {
 		return f, err
 	}
 
@@ -120,7 +119,7 @@ func (f *Finder) Valid() bool {
 }
 
 // func (f *Finder) OnChanged(o tree.Operator) {
-// 	f.Render()
+// 	f.Render(false)
 // }
 
 func (f *Finder) Window() (*window.Window, error) {
@@ -151,10 +150,15 @@ func (f *Finder) Close() error {
 	return f.window.Close()
 }
 
-func (f *Finder) Render() error {
+func (f *Finder) Render(fullScan bool) error {
 	// var mem runtime.MemStats
 	// runtime.ReadMemStats(&mem)
 	// f.nvim.Printf("rendered (%droutines, %dbytes, %dallocs, %dtallocs)\n", runtime.NumGoroutine(), mem.HeapAlloc, mem.Alloc, mem.TotalAlloc)
+	if fullScan {
+		if err := f.tree.Scan(); err != nil {
+			return err
+		}
+	}
 	return f.buffer.Write(f.tree.Lines())
 }
 
@@ -166,7 +170,7 @@ func (f *Finder) Up() error {
 	if err := f.tree.UpAt(p.Y()); err != nil {
 		return err
 	}
-	return f.Render()
+	return f.Render(false)
 }
 
 func (f *Finder) Down() error {
@@ -177,7 +181,7 @@ func (f *Finder) Down() error {
 	if err := f.tree.DownAt(p.Y()); err != nil {
 		return err
 	}
-	return f.Render()
+	return f.Render(false)
 }
 
 func (f *Finder) OpenFile(name string) error {
@@ -208,7 +212,7 @@ func (f *Finder) Toggle() error {
 	if err := f.tree.ToggleAt(p.Y()); err != nil {
 		return err
 	}
-	return f.Render()
+	return f.Render(false)
 }
 
 func (f *Finder) ToggleRec() error {
@@ -219,7 +223,7 @@ func (f *Finder) ToggleRec() error {
 	if err := f.tree.ToggleRecAt(p.Y()); err != nil {
 		return err
 	}
-	return f.Render()
+	return f.Render(false)
 }
 
 func (f *Finder) CreateDir() error {
@@ -227,18 +231,18 @@ func (f *Finder) CreateDir() error {
 	if err != nil {
 		return err
 	}
-	names, err := f.nvim.InputStrings("Enter the directory names to create")
+	names, err := f.nvim.InputStrings("Enter the directory names to create", nvim.CompletionNone)
 	if err != nil {
 		return err
 	}
 	if err := f.tree.CreateDirAt(p.Y(), names...); err != nil {
 		return err
 	}
-	return f.Render()
+	return f.Render(false)
 }
 
 func (f *Finder) CreateFile() error {
-	names, err := f.nvim.InputStrings("Enter the directory names to create")
+	names, err := f.nvim.InputStrings("Enter the directory names to create", nvim.CompletionNone)
 	if err != nil {
 		return err
 	}
@@ -249,29 +253,7 @@ func (f *Finder) CreateFile() error {
 	if err := f.tree.CreateFileAt(p.Y(), names...); err != nil {
 		return err
 	}
-	return f.Render()
-}
-
-func (f *Finder) Rename() error {
-	p, err := f.buffer.CurrentCursor()
-	if err != nil {
-		return err
-	}
-	o, ok := f.tree.IndexOf(p.Y())
-	if !ok {
-		//
-	}
-
-	old := o.Name()
-	new, err := f.nvim.Input(fmt.Sprintf("Rename the %s '%s' to", o.Type(), old), old)
-	if err != nil {
-		return err
-	}
-	if err := o.Rename(new); err != nil {
-		return err
-	}
-
-	return f.Render()
+	return f.Render(false)
 }
 
 func (f *Finder) Select() error {
@@ -290,19 +272,14 @@ func (f *Finder) Select() error {
 	if err := f.buffer.SetCurrentCursor(p); err != nil {
 		return err
 	}
-	return f.Render()
+	return f.Render(false)
 }
 
-func (f *Finder) Move() error {
+func (f *Finder) Rename() error {
+	defer f.Render(true)
+
 	if f.tree.HasSelected() {
-		path, err := f.nvim.InputString("Enter the destination to move the selected files")
-		if err != nil {
-			return err
-		}
-		if err := f.tree.MoveSelected(path); err != nil {
-			return err
-		}
-		return f.Render()
+		return f.tree.RenameSelected()
 	}
 
 	p, err := f.buffer.CurrentCursor()
@@ -313,17 +290,46 @@ func (f *Finder) Move() error {
 	if !ok {
 		//
 	}
-	path, err := f.nvim.InputString(fmt.Sprintf("Enter the destination to move the %s '%s'", o.Type(), o.Name()))
+	old := o.Name()
+	new, err := f.nvim.Input(fmt.Sprintf("Rename the %s '%s' to", o.Type(), old), old, nvim.CompletionNone)
 	if err != nil {
 		return err
 	}
-	if err := f.tree.MoveAt(p.Y(), path); err != nil {
+	return o.Rename(new)
+}
+
+func (f *Finder) Move() error {
+	defer f.Render(true)
+
+	if f.tree.HasSelected() {
+		path, err := f.nvim.InputString("Enter the destination to move the selected files", nvim.CompletionDir)
+		if err != nil {
+			return err
+		}
+		if path == "" {
+			return f.nvim.Printf("Moving objects has been canceled.\n")
+		}
+		return f.tree.MoveSelected(path)
+	}
+
+	p, err := f.buffer.CurrentCursor()
+	if err != nil {
 		return err
 	}
-	return f.Render()
+	o, ok := f.tree.IndexOf(p.Y())
+	if !ok {
+		//
+	}
+	path, err := f.nvim.InputString(fmt.Sprintf("Enter the destination to move the %s '%s'", o.Type(), o.Name()), nvim.CompletionDir)
+	if err != nil {
+		return err
+	}
+	return f.tree.MoveAt(p.Y(), path)
 }
 
 func (f *Finder) Remove() error {
+	defer f.Render(true)
+
 	if f.tree.HasSelected() {
 		ok, err := f.nvim.InputBool("Are you sure you want to permanently remove the selected files?")
 		if err != nil {
@@ -333,10 +339,7 @@ func (f *Finder) Remove() error {
 			// Do nothing.
 			return nil
 		}
-		if err := f.tree.RemoveSelected(); err != nil {
-			return err
-		}
-		return f.Render()
+		return f.tree.RemoveSelected()
 	}
 
 	p, err := f.buffer.CurrentCursor()
@@ -355,8 +358,5 @@ func (f *Finder) Remove() error {
 		// Do nothing.
 		return nil
 	}
-	if err := o.Remove(); err != nil {
-		return err
-	}
-	return f.Render()
+	return o.Remove()
 }
