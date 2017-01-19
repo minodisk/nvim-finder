@@ -36,7 +36,7 @@ function! s:binary(os)
     return 'finder_' . a:os . '_amd64' . l:postfix
 endfunction
 
-function! s:Requirefinder(host) abort
+function! s:RequireFinder(host) abort
     let l:os = s:os()
     if l:os == ''
         echoerr "Finder doesn't support your OS."
@@ -45,30 +45,34 @@ function! s:Requirefinder(host) abort
     return jobstart(['./rplugin/finder/bin/' . s:binary(l:os)], {'rpc': v:true})
 endfunction
 
-call remote#host#Register('finder', 'x', function('s:Requirefinder'))
+call remote#host#Register('finder', 'x', function('s:RequireFinder'))
 call remote#host#RegisterPlugin('finder', '0', [
     \ {'type': 'command', 'name': 'Finder', 'sync': 1, 'opts': {'nargs': '?'}},
     \ ])
 
+" Process
 autocmd FileType finder nnoremap <buffer> q         :<C-u>Finder quit<CR>
-" Moving directory
+" Updating current directory
+autocmd FileType finder nnoremap <buffer> \         :<C-u>Finder root<CR>
+autocmd FileType finder nnoremap <buffer> ~         :<C-u>Finder home<CR>
 autocmd FileType finder nnoremap <buffer> h         :<C-u>Finder up<CR>
 autocmd FileType finder nnoremap <buffer> e         :<C-u>Finder down<CR>
 autocmd FileType finder nnoremap <buffer> l         :<C-u>Finder down<CR>
 autocmd FileType finder nnoremap <buffer> <CR>      :<C-u>Finder down<CR>
-autocmd FileType finder nnoremap <buffer> \         :<C-u>Finder root<CR>
-autocmd FileType finder nnoremap <buffer> ~         :<C-u>Finder home<CR>
 autocmd FileType finder nnoremap <buffer> J         :<C-u>Finder cd<CR>
-" Updating status
+" Updating object status
+autocmd FileType finder nnoremap <buffer> <Space>   :<C-u>Finder select<CR>
+autocmd FileType finder nnoremap <buffer> *         :<C-u>Finder select_all<CR>
 autocmd FileType finder nnoremap <buffer> t         :<C-u>Finder toggle<CR>
 autocmd FileType finder nnoremap <buffer> T         :<C-u>Finder toggle_rec<CR>
-autocmd FileType finder nnoremap <buffer> <Space>   :<C-u>Finder select<CR>
 " Manipulating with OS
 autocmd FileType finder nnoremap <buffer> N         :<C-u>Finder create_file<CR>
 autocmd FileType finder nnoremap <buffer> K         :<C-u>Finder create_dir<CR>
 autocmd FileType finder nnoremap <buffer> r         :<C-u>Finder rename<CR>
 autocmd FileType finder nnoremap <buffer> m         :<C-u>Finder move<CR>
 autocmd FileType finder nnoremap <buffer> d         :<C-u>Finder remove<CR>
-autocmd FileType finder nnoremap <buffer> E         :<C-u>Finder open_with_os<CR>
+autocmd FileType finder nnoremap <buffer> x         :<C-u>Finder open_externally<CR>
+autocmd FileType finder nnoremap <buffer> X         :<C-u>Finder open_dir_externally<CR>
+autocmd FileType finder nnoremap <buffer> E         :<C-u>Finder open_dir_externally<CR>
 
 " vim:ts=4:sw=4:et

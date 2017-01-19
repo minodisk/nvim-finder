@@ -25,19 +25,31 @@ func plug(p *cplugin.Plugin) error {
 }
 
 const (
-	CommandInit      = "init"
-	CommandUp        = "up"
-	CommandDown      = "down"
+	// Updating process status
+	CommandInit = "init"
+	CommandQuit = "quit"
+
+	// Updating current directory
+	CommandRoot = "root"
+	CommandHome = "home"
+	CommandUp   = "up"
+	CommandDown = "down"
+	CommandCD   = "cd"
+
+	// Updating object status
+	CommandSelect    = "select"
+	CommandSelectAll = "select_all"
 	CommandToggle    = "toggle"
 	CommandToggleRec = "toggle_rec"
-	CommandSelect    = "select"
 
-	CommandCreateDir  = "create_dir"
-	CommandCreateFile = "create_file"
-	CommandRename     = "rename"
-	CommandMove       = "move"
-	CommandRemove     = "remove"
-	CommandOpenWithOS = "open_with_os"
+	// Executing system call
+	CommandCreateDir         = "create_dir"
+	CommandCreateFile        = "create_file"
+	CommandRename            = "rename"
+	CommandMove              = "move"
+	CommandRemove            = "remove"
+	CommandOpenExternally    = "open_externally"
+	CommandOpenDirExternally = "open_dir_externally"
 )
 
 func handle(v *cnvim.Nvim, args []string) error {
@@ -62,6 +74,7 @@ func handle(v *cnvim.Nvim, args []string) error {
 			return err
 		}
 		return nil
+
 	case CommandUp:
 		return finder.Up()
 	case CommandDown:
@@ -83,8 +96,10 @@ func handle(v *cnvim.Nvim, args []string) error {
 		return finder.Move()
 	case CommandRemove:
 		return finder.Remove()
-	case CommandOpenWithOS:
-		return finder.OpenWithOS()
+	case CommandOpenExternally:
+		return finder.OpenExternally()
+	case CommandOpenDirExternally:
+		return finder.OpenDirExternally()
 	default:
 		return errors.New("undefined Finder command")
 	}
