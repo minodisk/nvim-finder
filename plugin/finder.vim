@@ -47,19 +47,20 @@ endfunction
 
 call remote#host#Register('finder', 'x', function('s:RequireFinder'))
 call remote#host#RegisterPlugin('finder', '0', [
-    \ {'type': 'command', 'name': 'Finder', 'sync': 1, 'opts': {'nargs': '?'}},
+    \ {'type': 'command', 'name': 'Finder', 'sync': 1, 'opts': {'complete': 'customlist,FinderCommands', 'nargs': '?'}},
+    \ {'type': 'function', 'name': 'FinderCommands', 'sync': 1, 'opts': {}},
     \ ])
 
 " Process
 autocmd FileType finder nnoremap <buffer> q         :<C-u>Finder quit<CR>
 " Updating current directory
+autocmd FileType finder nnoremap <buffer> J         :<C-u>Finder cd<CR>
 autocmd FileType finder nnoremap <buffer> \         :<C-u>Finder root<CR>
 autocmd FileType finder nnoremap <buffer> ~         :<C-u>Finder home<CR>
 autocmd FileType finder nnoremap <buffer> h         :<C-u>Finder up<CR>
 autocmd FileType finder nnoremap <buffer> e         :<C-u>Finder down<CR>
 autocmd FileType finder nnoremap <buffer> l         :<C-u>Finder down<CR>
 autocmd FileType finder nnoremap <buffer> <CR>      :<C-u>Finder down<CR>
-autocmd FileType finder nnoremap <buffer> J         :<C-u>Finder cd<CR>
 " Updating object status
 autocmd FileType finder nnoremap <buffer> <Space>   :<C-u>Finder select<CR>
 autocmd FileType finder nnoremap <buffer> *         :<C-u>Finder select_all<CR>
