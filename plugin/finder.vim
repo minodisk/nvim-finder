@@ -6,8 +6,43 @@ if exists('g:loaded_finder')
 endif
 let g:finder_finder = 1
 
+function! s:trim(str)
+    return substitute(a:str, '^[\s\r\n]*\(.\{-}\)[\s\r\n]*$', '\1', '')
+endfunction
+
+function! s:uname()
+    return s:trim(system('uname'))
+endfunction
+
+function! s:os()
+    let l:uname = s:uname()
+    if l:uname[0:5] == 'Darwin'
+        return 'darwin'
+    endif
+    if l:uname[0:4] == 'Linux'
+        return 'linux'
+    endif
+    if l:uname[0:9] == 'MINGW32_NT'
+        return 'windows'
+    endif
+    return ''
+endfunction
+
+function! s:binary(os)
+    let l:postfix = ''
+    if a:os == 'windows'
+        let l:postfix = '.exe'
+    endif
+    return 'finder_' . a:os . '_amd64' . l:postfix
+endfunction
+
 function! s:Requirefinder(host) abort
-  return jobstart(['./rplugin/finder/bin/finder'], {'rpc': v:true})
+    let l:os = s:os()
+    if l:os == ''
+        echoerr "Finder doesn't support your OS."
+        return
+    endif
+    return jobstart(['./rplugin/finder/bin/' . s:binary(l:os)], {'rpc': v:true})
 endfunction
 
 call remote#host#Register('finder', 'x', function('s:Requirefinder'))
