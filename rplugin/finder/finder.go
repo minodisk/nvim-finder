@@ -242,7 +242,7 @@ func (f *Finder) Select() error {
 }
 
 func (f *Finder) SelectAll() error {
-	return nil
+	return f.tree.SelectAll(f.Render)
 }
 
 func (f *Finder) Toggle() error {
