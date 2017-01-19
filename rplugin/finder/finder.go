@@ -360,3 +360,11 @@ func (f *Finder) Remove() error {
 	}
 	return o.Remove()
 }
+
+func (f *Finder) OpenWithOS() error {
+	p, err := f.buffer.CurrentCursor()
+	if err != nil {
+		return err
+	}
+	return f.tree.OpenWithOS(p.Y())
+}

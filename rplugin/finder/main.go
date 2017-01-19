@@ -25,17 +25,19 @@ func plug(p *cplugin.Plugin) error {
 }
 
 const (
-	CommandInit       = "init"
-	CommandUp         = "up"
-	CommandDown       = "down"
-	CommandToggle     = "toggle"
-	CommandToggleRec  = "toggle_rec"
+	CommandInit      = "init"
+	CommandUp        = "up"
+	CommandDown      = "down"
+	CommandToggle    = "toggle"
+	CommandToggleRec = "toggle_rec"
+	CommandSelect    = "select"
+
 	CommandCreateDir  = "create_dir"
 	CommandCreateFile = "create_file"
 	CommandRename     = "rename"
 	CommandMove       = "move"
 	CommandRemove     = "remove"
-	CommandSelect     = "select"
+	CommandOpenWithOS = "open_with_os"
 )
 
 func handle(v *cnvim.Nvim, args []string) error {
@@ -47,88 +49,43 @@ func handle(v *cnvim.Nvim, args []string) error {
 	}
 	switch c {
 	case CommandInit:
-		return _init(v)
-	case CommandUp:
-		return up(v)
-	case CommandDown:
-		return down(v)
-	case CommandToggle:
-		return toggle(v)
-	case CommandToggleRec:
-		return toggleRec(v)
-	case CommandCreateDir:
-		return createDir(v)
-	case CommandCreateFile:
-		return createFile(v)
-	case CommandRename:
-		return rename(v)
-	case CommandMove:
-		return move(v)
-	case CommandRemove:
-		return remove(v)
-	case CommandSelect:
-		return _select(v)
-	default:
-		return undefined(v)
-	}
-}
-
-func _init(v *cnvim.Nvim) error {
-	if finder != nil && finder.Valid() {
-		if err := finder.Close(); err != nil {
+		if finder != nil && finder.Valid() {
+			if err := finder.Close(); err != nil {
+				return err
+			}
+			finder = nil
+			return nil
+		}
+		var err error
+		finder, err = New(nvim.New(v))
+		if err != nil {
 			return err
 		}
-		finder = nil
 		return nil
+	case CommandUp:
+		return finder.Up()
+	case CommandDown:
+		return finder.Down()
+	case CommandToggle:
+		return finder.Toggle()
+	case CommandToggleRec:
+		return finder.ToggleRec()
+	case CommandSelect:
+		return finder.Select()
+
+	case CommandCreateDir:
+		return finder.CreateDir()
+	case CommandCreateFile:
+		return finder.CreateFile()
+	case CommandRename:
+		return finder.Rename()
+	case CommandMove:
+		return finder.Move()
+	case CommandRemove:
+		return finder.Remove()
+	case CommandOpenWithOS:
+		return finder.OpenWithOS()
+	default:
+		return errors.New("undefined Finder command")
 	}
-	var err error
-	finder, err = New(nvim.New(v))
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func up(v *cnvim.Nvim) error {
-	return finder.Up()
-}
-
-func down(v *cnvim.Nvim) error {
-	return finder.Down()
-}
-
-func toggle(v *cnvim.Nvim) error {
-	return finder.Toggle()
-}
-
-func toggleRec(v *cnvim.Nvim) error {
-	return finder.ToggleRec()
-}
-
-func createDir(v *cnvim.Nvim) error {
-	return finder.CreateDir()
-}
-
-func createFile(v *cnvim.Nvim) error {
-	return finder.CreateFile()
-}
-
-func rename(v *cnvim.Nvim) error {
-	return finder.Rename()
-}
-
-func move(v *cnvim.Nvim) error {
-	return finder.Move()
-}
-
-func remove(v *cnvim.Nvim) error {
-	return finder.Remove()
-}
-
-func _select(v *cnvim.Nvim) error {
-	return finder.Select()
-}
-
-func undefined(v *cnvim.Nvim) error {
-	return errors.New("undefined Finder command")
 }
