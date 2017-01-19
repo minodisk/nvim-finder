@@ -61,19 +61,9 @@ func handle(v *cnvim.Nvim, args []string) error {
 	}
 	switch c {
 	case CommandInit:
-		if finder != nil && finder.Valid() {
-			if err := finder.Close(); err != nil {
-				return err
-			}
-			finder = nil
-			return nil
-		}
-		var err error
-		finder, err = New(nvim.New(v))
-		if err != nil {
-			return err
-		}
-		return nil
+		return Init(v)
+	case CommandQuit:
+		return Quit(v)
 
 	case CommandUp:
 		return finder.Up()
@@ -103,4 +93,23 @@ func handle(v *cnvim.Nvim, args []string) error {
 	default:
 		return errors.New("undefined Finder command")
 	}
+}
+
+func Init(v *cnvim.Nvim) error {
+	if finder != nil {
+		return Quit(v)
+	}
+	var err error
+	finder, err = New(nvim.New(v))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func Quit(v *cnvim.Nvim) error {
+	defer func() {
+		finder = nil
+	}()
+	return finder.Close()
 }
