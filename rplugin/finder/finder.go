@@ -28,6 +28,7 @@ type Finder struct {
 	tree   *tree.Tree
 	window *window.Window
 	buffer *buffer.Buffer
+	closed bool
 }
 
 func New(v *nvim.Nvim) (*Finder, error) {
@@ -154,10 +155,6 @@ func (f *Finder) Window() (*window.Window, error) {
 	return nil, errors.New("window not found")
 }
 
-func (f *Finder) Close() error {
-	return f.window.Close()
-}
-
 func (f *Finder) Render(lines [][]byte) error {
 	// var mem runtime.MemStats
 	// runtime.ReadMemStats(&mem)
@@ -185,6 +182,53 @@ func (f *Finder) OpenFile(file *tree.File) error {
 	return f.window.ResizeToDefaultWidth()
 }
 
+// Commands
+
+func (f *Finder) Closed() bool {
+	return f.closed || !f.Valid()
+}
+
+func (f *Finder) Close() error {
+	f.closed = true
+	return f.window.Close()
+}
+
+func (f *Finder) CD() error {
+	return f.tree.CD(func() (string, error) {
+		dir, err := f.nvim.InputString("Enter the destination directory", "", nvim.CompletionDir)
+		if err != nil {
+			return "", err
+		}
+		// if filepath.IsAbs(p) {
+		// 	return p, nil
+		// }
+		// cd, err := f.nvim.CurrentDirectory()
+		// if err != nil {
+		// 	return "", err
+		// }
+		if err := f.nvim.SetCurrentDirectory(dir); err != nil {
+			return "", err
+		}
+		dir, err = f.nvim.CurrentDirectory()
+		if err != nil {
+			return "", err
+		}
+		return dir, nil
+	}, f.Render)
+}
+
+func (f *Finder) Root() error {
+	return f.tree.CD(func() (string, error) {
+		return "/", nil
+	}, f.Render)
+}
+
+func (f *Finder) Home() error {
+	return f.tree.CD(func() (string, error) {
+		return "~", nil
+	}, f.Render)
+}
+
 func (f *Finder) Up() error {
 	return f.tree.Up(f.Cursor, f.Render)
 }
@@ -195,6 +239,10 @@ func (f *Finder) Down() error {
 
 func (f *Finder) Select() error {
 	return f.tree.Select(f.Cursor, f.SetCursor, f.Render)
+}
+
+func (f *Finder) SelectAll() error {
+	return nil
 }
 
 func (f *Finder) Toggle() error {
