@@ -51,17 +51,24 @@ call remote#host#RegisterPlugin('finder', '0', [
     \ ])
 
 autocmd FileType finder nnoremap <buffer> q         :<C-u>Finder quit<CR>
+" Moving directory
 autocmd FileType finder nnoremap <buffer> h         :<C-u>Finder up<CR>
 autocmd FileType finder nnoremap <buffer> e         :<C-u>Finder down<CR>
 autocmd FileType finder nnoremap <buffer> l         :<C-u>Finder down<CR>
 autocmd FileType finder nnoremap <buffer> <CR>      :<C-u>Finder down<CR>
+autocmd FileType finder nnoremap <buffer> \         :<C-u>Finder root<CR>
+autocmd FileType finder nnoremap <buffer> ~         :<C-u>Finder home<CR>
+autocmd FileType finder nnoremap <buffer> J         :<C-u>Finder cd<CR>
+" Updating status
 autocmd FileType finder nnoremap <buffer> t         :<C-u>Finder toggle<CR>
 autocmd FileType finder nnoremap <buffer> T         :<C-u>Finder toggle_rec<CR>
+autocmd FileType finder nnoremap <buffer> <Space>   :<C-u>Finder select<CR>
+" Manipulating with OS
 autocmd FileType finder nnoremap <buffer> N         :<C-u>Finder create_file<CR>
 autocmd FileType finder nnoremap <buffer> K         :<C-u>Finder create_dir<CR>
 autocmd FileType finder nnoremap <buffer> r         :<C-u>Finder rename<CR>
-autocmd FileType finder nnoremap <buffer> d         :<C-u>Finder remove<CR>
 autocmd FileType finder nnoremap <buffer> m         :<C-u>Finder move<CR>
-autocmd FileType finder nnoremap <buffer> <Space>   :<C-u>Finder select<CR>
+autocmd FileType finder nnoremap <buffer> d         :<C-u>Finder remove<CR>
+autocmd FileType finder nnoremap <buffer> E         :<C-u>Finder open_with_os<CR>
 
 " vim:ts=4:sw=4:et
