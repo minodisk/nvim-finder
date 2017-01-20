@@ -31,6 +31,11 @@ const (
 	CommandRemove            = "remove"
 	CommandOpenExternally    = "open_externally"
 	CommandOpenDirExternally = "open_dir_externally"
+	// Copy and paste
+	CommandCopy  = "copy"
+	CommandPaste = "paste"
+	// Clipboard
+	CommandYank = "yank"
 )
 
 var (
@@ -124,6 +129,14 @@ func CallFinder(v *cnvim.Nvim, args []string) error {
 		return finder.OpenExternally()
 	case CommandOpenDirExternally:
 		return finder.OpenDirExternally()
+
+	case CommandCopy:
+		return finder.Copy()
+	case CommandPaste:
+		return finder.Paste()
+
+	case CommandYank:
+		return finder.Yank()
 
 	default:
 		return fmt.Errorf("undefined command '%s'", cmd)

@@ -75,5 +75,10 @@ autocmd FileType finder nnoremap <buffer> d         :<C-u>Finder remove<CR>
 autocmd FileType finder nnoremap <buffer> x         :<C-u>Finder open_externally<CR>
 autocmd FileType finder nnoremap <buffer> X         :<C-u>Finder open_dir_externally<CR>
 autocmd FileType finder nnoremap <buffer> E         :<C-u>Finder open_dir_externally<CR>
+" Copy and paste
+autocmd FileType finder nnoremap <buffer> c         :<C-u>Finder copy<CR>
+autocmd FileType finder nnoremap <buffer> p         :<C-u>Finder paste<CR>
+" Clipboard
+autocmd FileType finder nnoremap <buffer> y         :<C-u>Finder yank<CR>
 
 " vim:ts=4:sw=4:et

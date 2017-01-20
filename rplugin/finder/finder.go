@@ -182,6 +182,10 @@ func (f *Finder) OpenFile(file *tree.File) error {
 	return f.window.ResizeToDefaultWidth()
 }
 
+func (f *Finder) RegisterYank(text string) error {
+	return f.nvim.SetRegisterYank(text)
+}
+
 // Commands
 
 func (f *Finder) Closed() bool {
@@ -267,7 +271,7 @@ func (f *Finder) CreateFile() error {
 
 func (f *Finder) Rename() error {
 	return f.tree.Rename(f.Cursor, func(o tree.Operator) (string, error) {
-		return f.nvim.Input(fmt.Sprintf("Rename the %s '%s' to", o.Type(), o.Name()), o.Name(), nvim.CompletionNone)
+		return f.nvim.InputString(fmt.Sprintf("Rename the %s '%s' to", tree.Type(o), o.Name()), o.Name(), nvim.CompletionNone)
 	}, func(os ...tree.Operator) ([]string, error) {
 		names := make([]string, len(os))
 		for i, o := range os {
@@ -283,7 +287,7 @@ func (f *Finder) Move() error {
 	return f.tree.Move(f.Cursor, func(os ...tree.Operator) (string, error) {
 		if len(os) == 1 {
 			o := os[0]
-			return f.nvim.InputString(fmt.Sprintf("Enter the destination to move the %s '%s'", o.Type(), o.Name()), "", nvim.CompletionDir)
+			return f.nvim.InputString(fmt.Sprintf("Enter the destination to move the %s '%s'", tree.Type(o), o.Name()), "", nvim.CompletionDir)
 		}
 		return f.nvim.InputString("Enter the destination to move the selected files", "", nvim.CompletionDir)
 	}, func() error {
@@ -295,7 +299,7 @@ func (f *Finder) Remove() error {
 	return f.tree.Remove(f.Cursor, func(os ...tree.Operator) (bool, error) {
 		if len(os) == 1 {
 			o := os[0]
-			return f.nvim.InputBool(fmt.Sprintf("Are you sure you want to permanently remove the %s '%s'?", o.Type(), o.Name()))
+			return f.nvim.InputBool(fmt.Sprintf("Are you sure you want to permanently remove the %s '%s'?", tree.Type(o), o.Name()))
 		}
 		return f.nvim.InputBool("Are you sure you want to permanently remove the selected objects?")
 	}, func() error {
@@ -309,4 +313,16 @@ func (f *Finder) OpenExternally() error {
 
 func (f *Finder) OpenDirExternally() error {
 	return f.tree.OpenDirExternally(f.Cursor, f.Render)
+}
+
+func (f *Finder) Copy() error {
+	return nil
+}
+
+func (f *Finder) Paste() error {
+	return nil
+}
+
+func (f *Finder) Yank() error {
+	return f.tree.Yank(f.Cursor, f.RegisterYank)
 }
