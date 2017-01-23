@@ -3,15 +3,16 @@ package main
 import (
 	"fmt"
 
-	"github.com/minodisk/go-nvim/nvim"
 	cnvim "github.com/neovim/go-client/nvim"
 	cplugin "github.com/neovim/go-client/nvim/plugin"
 )
 
 const (
 	// Updating process status
-	CommandInit = "init"
-	CommandQuit = "quit"
+	CommandSwitch  = "switch"
+	CommandCreate  = "create"
+	CommandQuit    = "quit"
+	CommandQuitAll = "quit_all"
 	// Updating current directory
 	CommandRoot = "root"
 	CommandHome = "home"
@@ -19,10 +20,10 @@ const (
 	CommandDown = "down"
 	CommandCD   = "cd"
 	// Updating object status
-	CommandSelect    = "select"
-	CommandSelectAll = "select_all"
-	CommandToggle    = "toggle"
-	CommandToggleRec = "toggle_rec"
+	CommandSelect          = "select"
+	CommandReverseSelected = "reverse_selected"
+	CommandToggle          = "toggle"
+	CommandToggleRec       = "toggle_rec"
 	// Executing system call
 	CommandCreateDir         = "create_dir"
 	CommandCreateFile        = "create_file"
@@ -32,23 +33,26 @@ const (
 	CommandOpenExternally    = "open_externally"
 	CommandOpenDirExternally = "open_dir_externally"
 	// Copy and paste
-	CommandCopy  = "copy"
-	CommandPaste = "paste"
+	CommandCopy       = "copy"
+	CommandCopiedList = "copied_list"
+	CommandPaste      = "paste"
 	// Clipboard
 	CommandYank = "yank"
 )
 
 var (
 	Commands = []string{
-		CommandInit,
+		CommandSwitch,
+		CommandCreate,
 		CommandQuit,
+		CommandQuitAll,
 		CommandRoot,
 		CommandHome,
 		CommandUp,
 		CommandDown,
 		CommandCD,
 		CommandSelect,
-		CommandSelectAll,
+		CommandReverseSelected,
 		CommandToggle,
 		CommandToggleRec,
 		CommandCreateDir,
@@ -58,8 +62,38 @@ var (
 		CommandRemove,
 		CommandOpenExternally,
 		CommandOpenDirExternally,
+		CommandCopy,
+		CommandCopiedList,
+		CommandPaste,
+		CommandYank,
 	}
-	finder *Finder
+
+	// Functions = map[string]func(*cnvim.Nvim) error{
+	// 	"FinderSwitch":            Switch,
+	// 	"FinderCreate":            Create,
+	// 	"FinderQuit":              Quit,
+	// 	"FinderQuitAll":           QuitAll,
+	// 	"FinderRoot":              Root,
+	// 	"FinderHome":              Home,
+	// 	"FinderUp":                Up,
+	// 	"FinderDown":              Down,
+	// 	"FinderCD":                CD,
+	// 	"FinderSelect":            Select,
+	// 	"FinderSelectAll":         SelectAll,
+	// 	"FinderToggle":            Toggle,
+	// 	"FinderToggleRec":         ToggleRec,
+	// 	"FinderCreateDir":         CreateDir,
+	// 	"FinderCreateFile":        CreateFile,
+	// 	"FinderRename":            Rename,
+	// 	"FinderMove":              Move,
+	// 	"FinderRemove":            Remove,
+	// 	"FinderOpenExternally":    OpenExternally,
+	// 	"FinderOpenDirExternally": OpenDirExternally,
+	// 	"FinderCopy":              Copy,
+	// 	"FinderCopiedList":        CopiedList,
+	// 	"FinderPaste":             Paste,
+	// 	"FinderYank":              Yank,
+	// }
 )
 
 func main() {
@@ -75,6 +109,13 @@ func plug(p *cplugin.Plugin) error {
 		NArgs:    "?",
 		Complete: "customlist,FinderCommands",
 	}, CallFinder)
+
+	// for n, f := range Functions {
+	// 	p.HandleFunction(&cplugin.FunctionOptions{
+	// 		Name: n,
+	// 	}, f)
+	// }
+
 	return nil
 }
 
@@ -85,79 +126,67 @@ func FinderCommands(v *cnvim.Nvim, args []string) ([]string, error) {
 func CallFinder(v *cnvim.Nvim, args []string) error {
 	var cmd string
 	if len(args) == 0 {
-		cmd = CommandInit
+		cmd = CommandSwitch
 	} else {
 		cmd = args[0]
 	}
+
 	switch cmd {
-	case CommandInit:
-		return Init(v)
+	case CommandSwitch:
+		return Switch(v)
+	case CommandCreate:
+		return Create(v)
 	case CommandQuit:
 		return Quit(v)
+	case CommandQuitAll:
+		return QuitAll(v)
 
 	case CommandCD:
-		return finder.CD()
+		return CD(v)
 	case CommandRoot:
-		return finder.Root()
+		return Root(v)
 	case CommandHome:
-		return finder.Home()
+		return Home(v)
 	case CommandUp:
-		return finder.Up()
+		return Up(v)
 	case CommandDown:
-		return finder.Down()
+		return Down(v)
 
 	case CommandSelect:
-		return finder.Select()
-	case CommandSelectAll:
-		return finder.SelectAll()
+		return Select(v)
+	case CommandReverseSelected:
+		return ReverseSelected(v)
 	case CommandToggle:
-		return finder.Toggle()
+		return Toggle(v)
 	case CommandToggleRec:
-		return finder.ToggleRec()
+		return ToggleRec(v)
 
 	case CommandCreateDir:
-		return finder.CreateDir()
+		return CreateDir(v)
 	case CommandCreateFile:
-		return finder.CreateFile()
+		return CreateFile(v)
 	case CommandRename:
-		return finder.Rename()
+		return Rename(v)
 	case CommandMove:
-		return finder.Move()
+		return Move(v)
 	case CommandRemove:
-		return finder.Remove()
+		return Remove(v)
 	case CommandOpenExternally:
-		return finder.OpenExternally()
+		return OpenExternally(v)
 	case CommandOpenDirExternally:
-		return finder.OpenDirExternally()
+		return OpenDirExternally(v)
 
 	case CommandCopy:
-		return finder.Copy()
+		return Copy(v)
+	case CommandCopiedList:
+		return CopiedList(v)
 	case CommandPaste:
-		return finder.Paste()
+		return Paste(v)
 
 	case CommandYank:
-		return finder.Yank()
+		return Yank(v)
 
 	default:
 		return fmt.Errorf("undefined command '%s'", cmd)
 	}
-}
-
-func Init(v *cnvim.Nvim) error {
-	if finder != nil && !finder.Closed() {
-		return Quit(v)
-	}
-	var err error
-	finder, err = New(nvim.New(v))
-	return err
-}
-
-func Quit(v *cnvim.Nvim) error {
-	defer func() {
-		finder = nil
-	}()
-	if finder == nil {
-		return nil
-	}
-	return finder.Close()
 }

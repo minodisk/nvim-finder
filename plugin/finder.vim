@@ -1,6 +1,3 @@
-" finder
-" Version: 0.1
-
 if exists('g:loaded_finder')
   finish
 endif
@@ -51,19 +48,22 @@ call remote#host#RegisterPlugin('finder', '0', [
     \ {'type': 'function', 'name': 'FinderCommands', 'sync': 1, 'opts': {}},
     \ ])
 
+
 " Process
 autocmd FileType finder nnoremap <buffer> q         :<C-u>Finder quit<CR>
+autocmd FileType finder nnoremap <buffer> Q         :<C-u>Finder quit_all<CR>
 " Updating current directory
 autocmd FileType finder nnoremap <buffer> J         :<C-u>Finder cd<CR>
 autocmd FileType finder nnoremap <buffer> \         :<C-u>Finder root<CR>
 autocmd FileType finder nnoremap <buffer> ~         :<C-u>Finder home<CR>
+autocmd FileType finder nnoremap <buffer> .         :<C-u>Finder project<CR>
 autocmd FileType finder nnoremap <buffer> h         :<C-u>Finder up<CR>
 autocmd FileType finder nnoremap <buffer> e         :<C-u>Finder down<CR>
 autocmd FileType finder nnoremap <buffer> l         :<C-u>Finder down<CR>
 autocmd FileType finder nnoremap <buffer> <CR>      :<C-u>Finder down<CR>
 " Updating object status
 autocmd FileType finder nnoremap <buffer> <Space>   :<C-u>Finder select<CR>
-autocmd FileType finder nnoremap <buffer> *         :<C-u>Finder select_all<CR>
+autocmd FileType finder nnoremap <buffer> *         :<C-u>Finder reverse_selected<CR>
 autocmd FileType finder nnoremap <buffer> t         :<C-u>Finder toggle<CR>
 autocmd FileType finder nnoremap <buffer> T         :<C-u>Finder toggle_rec<CR>
 " Manipulating with OS
@@ -77,6 +77,7 @@ autocmd FileType finder nnoremap <buffer> X         :<C-u>Finder open_dir_extern
 autocmd FileType finder nnoremap <buffer> E         :<C-u>Finder open_dir_externally<CR>
 " Copy and paste
 autocmd FileType finder nnoremap <buffer> c         :<C-u>Finder copy<CR>
+autocmd FileType finder nnoremap <buffer> C         :<C-u>Finder copied_list<CR>
 autocmd FileType finder nnoremap <buffer> p         :<C-u>Finder paste<CR>
 " Clipboard
 autocmd FileType finder nnoremap <buffer> y         :<C-u>Finder yank<CR>
