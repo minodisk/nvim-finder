@@ -1,6 +1,12 @@
-package: github.com/minodisk/filer
+package: github.com/minodisk/nvim-finder/rplugin/finder
 import:
+- package: github.com/minodisk/go-nvim
+  subpackages:
+  - buffer
+  - nvim
+  - window
+- package: github.com/minodisk/go-tree
 - package: github.com/neovim/go-client
   subpackages:
+  - nvim
   - nvim/plugin
-- package: github.com/myitcv/neovim

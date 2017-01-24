@@ -262,15 +262,19 @@ func (f *Finder) CD() error {
 }
 
 func (f *Finder) Root() error {
-	return f.tree.CD(func() (string, error) {
-		return "/", nil
-	}, f.Render)
+	return f.tree.Root(f.Render)
 }
 
 func (f *Finder) Home() error {
-	return f.tree.CD(func() (string, error) {
-		return "~", nil
-	}, f.Render)
+	return f.tree.Home(f.Render)
+}
+
+func (f *Finder) Trash() error {
+	return f.tree.Trash(f.Render)
+}
+
+func (f *Finder) Project() error {
+	return f.tree.Project(f.Render)
 }
 
 func (f *Finder) Up() error {
@@ -335,24 +339,48 @@ func (f *Finder) Move() error {
 	}, f.Render)
 }
 
-func (f *Finder) Remove() error {
-	return f.tree.Remove(f.Cursor, func(os ...tree.Operator) (bool, error) {
-		if len(os) == 1 {
-			o := os[0]
-			return f.nvim.InputBool(fmt.Sprintf("Are you sure you want to permanently remove the %s '%s'?", tree.Type(o), o.Name()))
-		}
-		return f.nvim.InputBool("Are you sure you want to permanently remove the selected objects?")
-	}, func() error {
-		return f.nvim.Printf("Remove has been canceled.\n")
-	}, f.Render)
-}
-
 func (f *Finder) OpenExternally() error {
 	return f.tree.OpenExternally(f.Cursor, f.Render)
 }
 
 func (f *Finder) OpenDirExternally() error {
 	return f.tree.OpenDirExternally(f.Cursor, f.Render)
+}
+
+func (f *Finder) Remove() error {
+	return f.tree.Remove(f.Cursor, func(os ...tree.Operator) (bool, error) {
+		if len(os) == 1 {
+			o := os[0]
+			return f.nvim.InputBool(fmt.Sprintf("Are you sure you want to remove the %s '%s'?", tree.Type(o), o.Name()))
+		}
+		return f.nvim.InputBool("Are you sure you want to remove the selected objects?")
+	}, func() error {
+		return f.nvim.Printf("Remove has been canceled.\n")
+	}, f.Render)
+}
+
+func (f *Finder) Restore() error {
+	return f.tree.Restore(f.Cursor, func(os ...tree.Operator) (bool, error) {
+		if len(os) == 1 {
+			o := os[0]
+			return f.nvim.InputBool(fmt.Sprintf("Are you sure you want to restore the %s '%s'?", tree.Type(o), tree.OriginalPath(o)))
+		}
+		return f.nvim.InputBool("Are you sure you want to restore the selected objects?")
+	}, func() error {
+		return f.nvim.Printf("Remove has been canceled.\n")
+	}, f.Render)
+}
+
+func (f *Finder) RemovePermanently() error {
+	return f.tree.RemovePermanently(f.Cursor, func(os ...tree.Operator) (bool, error) {
+		if len(os) == 1 {
+			o := os[0]
+			return f.nvim.InputBool(fmt.Sprintf("Are you sure you want to permanently remove the %s '%s'?", tree.Type(o), o.Name()))
+		}
+		return f.nvim.InputBool("Are you sure you want to permanently remove the selected objects?")
+	}, func() error {
+		return f.nvim.Printf("Remove permanently has been canceled.\n")
+	}, f.Render)
 }
 
 func (f *Finder) Copy() error {

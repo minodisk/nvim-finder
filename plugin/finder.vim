@@ -56,6 +56,7 @@ autocmd FileType finder nnoremap <buffer> Q         :<C-u>Finder quit_all<CR>
 autocmd FileType finder nnoremap <buffer> J         :<C-u>Finder cd<CR>
 autocmd FileType finder nnoremap <buffer> \         :<C-u>Finder root<CR>
 autocmd FileType finder nnoremap <buffer> ~         :<C-u>Finder home<CR>
+autocmd FileType finder nnoremap <buffer> $         :<C-u>Finder trash<CR>
 autocmd FileType finder nnoremap <buffer> .         :<C-u>Finder project<CR>
 autocmd FileType finder nnoremap <buffer> h         :<C-u>Finder up<CR>
 autocmd FileType finder nnoremap <buffer> e         :<C-u>Finder down<CR>
@@ -71,10 +72,13 @@ autocmd FileType finder nnoremap <buffer> N         :<C-u>Finder create_file<CR>
 autocmd FileType finder nnoremap <buffer> K         :<C-u>Finder create_dir<CR>
 autocmd FileType finder nnoremap <buffer> r         :<C-u>Finder rename<CR>
 autocmd FileType finder nnoremap <buffer> m         :<C-u>Finder move<CR>
-autocmd FileType finder nnoremap <buffer> d         :<C-u>Finder remove<CR>
 autocmd FileType finder nnoremap <buffer> x         :<C-u>Finder open_externally<CR>
 autocmd FileType finder nnoremap <buffer> X         :<C-u>Finder open_dir_externally<CR>
 autocmd FileType finder nnoremap <buffer> E         :<C-u>Finder open_dir_externally<CR>
+" Remove and restore
+autocmd FileType finder nnoremap <buffer> D         :<C-u>Finder remove_permanently<CR>
+autocmd FileType finder nnoremap <buffer> d         :<C-u>Finder remove<CR>
+autocmd FileType finder nnoremap <buffer> R         :<C-u>Finder restore<CR>
 " Copy and paste
 autocmd FileType finder nnoremap <buffer> c         :<C-u>Finder copy<CR>
 autocmd FileType finder nnoremap <buffer> C         :<C-u>Finder copied_list<CR>

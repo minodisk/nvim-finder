@@ -119,6 +119,22 @@ func Home(cv *cnvim.Nvim) error {
 	return f.Home()
 }
 
+func Trash(cv *cnvim.Nvim) error {
+	f := CurrentFinder()
+	if f == nil || f.Closed() {
+		return nil
+	}
+	return f.Trash()
+}
+
+func Project(cv *cnvim.Nvim) error {
+	f := CurrentFinder()
+	if f == nil || f.Closed() {
+		return nil
+	}
+	return f.Project()
+}
+
 func Up(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil || f.Closed() {
@@ -199,14 +215,6 @@ func Move(cv *cnvim.Nvim) error {
 	return f.Move()
 }
 
-func Remove(cv *cnvim.Nvim) error {
-	f := CurrentFinder()
-	if f == nil || f.Closed() {
-		return nil
-	}
-	return f.Remove()
-}
-
 func OpenExternally(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil || f.Closed() {
@@ -221,6 +229,30 @@ func OpenDirExternally(cv *cnvim.Nvim) error {
 		return nil
 	}
 	return f.OpenDirExternally()
+}
+
+func Remove(cv *cnvim.Nvim) error {
+	f := CurrentFinder()
+	if f == nil || f.Closed() {
+		return nil
+	}
+	return f.Remove()
+}
+
+func RemovePermanently(cv *cnvim.Nvim) error {
+	f := CurrentFinder()
+	if f == nil || f.Closed() {
+		return nil
+	}
+	return f.RemovePermanently()
+}
+
+func Restore(cv *cnvim.Nvim) error {
+	f := CurrentFinder()
+	if f == nil || f.Closed() {
+		return nil
+	}
+	return f.Restore()
 }
 
 func Copy(cv *cnvim.Nvim) error {
