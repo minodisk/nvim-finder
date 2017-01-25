@@ -38,10 +38,10 @@ func Closed() bool {
 	return closed
 }
 
-func Switch(cv *cnvim.Nvim) error {
+func TogglePane(cv *cnvim.Nvim) error {
 	if Closed() {
 		finders = []*Finder{}
-		return Create(cv)
+		return OpenPane(cv)
 	}
 
 	for _, f := range finders {
@@ -53,7 +53,7 @@ func Switch(cv *cnvim.Nvim) error {
 	return nil
 }
 
-func Create(cv *cnvim.Nvim) error {
+func OpenPane(cv *cnvim.Nvim) error {
 	v := nvim.New(cv)
 	f, err := New(v, len(finders), context)
 	if err != nil {
@@ -63,7 +63,7 @@ func Create(cv *cnvim.Nvim) error {
 	return nil
 }
 
-func Quit(cv *cnvim.Nvim) error {
+func ClosePane(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil {
 		return nil
@@ -85,7 +85,7 @@ func Quit(cv *cnvim.Nvim) error {
 	return nil
 }
 
-func QuitAll(cv *cnvim.Nvim) error {
+func CloseAllPanes(cv *cnvim.Nvim) error {
 	for _, finder := range finders {
 		if err := finder.Close(); err != nil {
 			return err
@@ -95,7 +95,7 @@ func QuitAll(cv *cnvim.Nvim) error {
 	return nil
 }
 
-func CD(cv *cnvim.Nvim) error {
+func GoTo(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil || f.Closed() {
 		return nil
@@ -103,7 +103,7 @@ func CD(cv *cnvim.Nvim) error {
 	return f.CD()
 }
 
-func Root(cv *cnvim.Nvim) error {
+func GoToRoot(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil || f.Closed() {
 		return nil
@@ -111,7 +111,7 @@ func Root(cv *cnvim.Nvim) error {
 	return f.Root()
 }
 
-func Home(cv *cnvim.Nvim) error {
+func GoToHome(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil || f.Closed() {
 		return nil
@@ -119,7 +119,7 @@ func Home(cv *cnvim.Nvim) error {
 	return f.Home()
 }
 
-func Trash(cv *cnvim.Nvim) error {
+func GoToTrash(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil || f.Closed() {
 		return nil
@@ -127,7 +127,7 @@ func Trash(cv *cnvim.Nvim) error {
 	return f.Trash()
 }
 
-func Project(cv *cnvim.Nvim) error {
+func GoToProject(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil || f.Closed() {
 		return nil
@@ -135,7 +135,7 @@ func Project(cv *cnvim.Nvim) error {
 	return f.Project()
 }
 
-func Up(cv *cnvim.Nvim) error {
+func GoToUpper(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil || f.Closed() {
 		return nil
@@ -143,7 +143,7 @@ func Up(cv *cnvim.Nvim) error {
 	return f.Up()
 }
 
-func Down(cv *cnvim.Nvim) error {
+func GoToLowerOrOpen(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil || f.Closed() {
 		return nil
@@ -175,7 +175,7 @@ func Toggle(cv *cnvim.Nvim) error {
 	return f.Toggle()
 }
 
-func ToggleRec(cv *cnvim.Nvim) error {
+func ToggleRecursively(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil || f.Closed() {
 		return nil
@@ -263,7 +263,7 @@ func Copy(cv *cnvim.Nvim) error {
 	return f.Copy()
 }
 
-func CopiedList(cv *cnvim.Nvim) error {
+func ShowCopiedList(cv *cnvim.Nvim) error {
 	f := CurrentFinder()
 	if f == nil || f.Closed() {
 		return nil
