@@ -13,6 +13,7 @@ import (
 
 const (
 	ConfigBufferName = "finder_buffer_name"
+	ConfigFileType   = "finder_file_type"
 	ConfigWidth      = "finder_width"
 
 	DefaultBufferName = "finder"
@@ -23,6 +24,7 @@ const (
 type Finder struct {
 	nvim       *nvim.Nvim
 	bufferName string
+	fileType   string
 	width      int
 	tree       *tree.Tree
 }
@@ -36,6 +38,13 @@ func New(v *nvim.Nvim, index int, context *tree.Context) (*Finder, error) {
 			bufferName = DefaultBufferName
 		}
 		f.bufferName = filepath.Join(cw, fmt.Sprintf("%s-%d", bufferName, index))
+	}
+	{
+		fileType, err := v.VarString(ConfigFileType)
+		if err != nil || fileType == "" {
+			fileType = DefaultFileType
+		}
+		f.fileType = fileType
 	}
 	{
 		width, err := v.VarInt(ConfigWidth)
@@ -89,16 +98,13 @@ func New(v *nvim.Nvim, index int, context *tree.Context) (*Finder, error) {
 	}); err != nil {
 		return f, err
 	}
-	if err := b.SetFileType(DefaultFileType); err != nil {
+	if err := b.SetFileType(f.fileType); err != nil {
 		return f, err
 	}
 
 	if err := f.tree.Open(f.Render); err != nil {
 		return f, err
 	}
-	// if err := f.ResetWindowWidth(); err != nil {
-	// 	return f, err
-	// }
 	return f, nil
 }
 
@@ -121,10 +127,6 @@ func (f *Finder) Windows() ([]*window.Window, error) {
 		if err != nil {
 			return nil, err
 		}
-		// t, err := b.FileType()
-		// if err != nil {
-		// 	continue
-		// }
 		n, err := b.Name()
 		if err != nil {
 			continue
@@ -143,13 +145,6 @@ func (f *Finder) Buffer() (*buffer.Buffer, error) {
 		return nil, err
 	}
 	for _, b := range bs {
-		// t, err := b.FileType()
-		// if err != nil {
-		// 	return nil, err
-		// }
-		// if t != DefaultFileType {
-		// 	continue
-		// }
 		n, err := b.Name()
 		if err != nil {
 			continue
@@ -205,8 +200,32 @@ func (f *Finder) Render(lines [][]byte) error {
 }
 
 func (f *Finder) OpenFile(file *tree.File) error {
+	ws, err := f.nvim.Windows()
+	if err != nil {
+		return err
+	}
+	for _, w := range ws {
+		b, err := w.Buffer()
+		if err != nil {
+			return err
+		}
+		ft, err := b.FileType()
+		if err != nil {
+			return err
+		}
+		if ft != f.fileType {
+			if err := w.Open(file.Path()); err != nil {
+				return err
+			}
+			return w.Focus()
+		}
+	}
+
 	w, err := f.nvim.CreateWindowRight(file.Path())
 	if err != nil {
+		return err
+	}
+	if err := f.ResetWindowWidth(); err != nil {
 		return err
 	}
 	return w.Focus()
