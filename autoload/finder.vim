@@ -36,9 +36,9 @@ function! finder#jobstart(host) abort
         echoerr "Finder doesn't support your OS."
         return
     endif
-    return jobstart(['./rplugin/finder/bin/' . finder#binary(os)], {'rpc': v:true})
+    return jobstart([expand('<sfile>:p:h:h'),  '/rplugin/finder/bin/' . finder#binary(os)], {'rpc': v:true})
 endfunction
 
-source ./autoload/finder/keymap.vim
+exec 'source ' . expand('<sfile>:p:h') . '/finder/keymap.vim'
 
 " vim:ts=4:sw=4:et
