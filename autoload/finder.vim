@@ -30,8 +30,10 @@ endfunction
 function! finder#binary() abort
     if has('win64')
         return 'finder_windows_amd64.exe'
+    endif
     if has('mac') && finder#is_64bit()
         return 'finder_darwin_amd64'
+    endif
     if has('unix') && finder#os() == 'linux' && finder#is_64bit()
         return 'finder_linux_amd64'
     endif
