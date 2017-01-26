@@ -30,15 +30,6 @@ function! finder#binary(os) abort
     return 'finder_' . a:os . '_amd64' . postfix
 endfunction
 
-function! finder#jobstart(host) abort
-    let os = finder#os()
-    if os == ''
-        echoerr "Finder doesn't support your OS."
-        return
-    endif
-    return jobstart([expand('<sfile>:p:h:h'),  '/rplugin/finder/bin/' . finder#binary(os)], {'rpc': v:true})
-endfunction
-
 exec 'source ' . expand('<sfile>:p:h') . '/finder/keymap.vim'
 
 " vim:ts=4:sw=4:et
