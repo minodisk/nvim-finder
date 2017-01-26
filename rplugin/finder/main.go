@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	cnvim "github.com/neovim/go-client/nvim"
@@ -159,26 +161,41 @@ var (
 	}
 )
 
+var (
+	manifest       bool
+	manifestOutput string
+)
+
 func main() {
-	if len(os.Args) > 1 && os.Args[1] == "-keymap" {
-		printKeymap()
-		return
+	if len(os.Args) > 2 {
+		switch os.Args[1] {
+		case "manifest":
+			manifest = true
+			manifestOutput = os.Args[2]
+			cplugin.Main(plug)
+			return
+		case "keymap":
+			printKeymap(os.Args[2])
+			return
+		}
 	}
 	cplugin.Main(plug)
 }
 
-func printKeymap() {
-	fmt.Printf("augroup finder\n")
-	fmt.Printf("  autocmd!\n")
+func printKeymap(path string) {
+	var b bytes.Buffer
+	fmt.Fprintf(&b, "augroup finder\n")
+	fmt.Fprintf(&b, "  autocmd!\n")
 	for _, f := range Functions {
 		if len(f.Keymaps) == 0 {
 			continue
 		}
 		for _, k := range f.Keymaps {
-			fmt.Printf("  autocmd FileType finder nnoremap <buffer> %s :<C-u>call Finder%s()<CR>\n", k, f.Name)
+			fmt.Fprintf(&b, "  autocmd FileType finder nnoremap <buffer> %s :<C-u>call Finder%s()<CR>\n", k, f.Name)
 		}
 	}
-	fmt.Printf("augroup END\n")
+	fmt.Fprintf(&b, "augroup END\n")
+	ioutil.WriteFile(path, b.Bytes(), 0644)
 }
 
 func plug(p *cplugin.Plugin) error {
@@ -191,6 +208,21 @@ func plug(p *cplugin.Plugin) error {
 		p.HandleFunction(&cplugin.FunctionOptions{
 			Name: fmt.Sprintf("Finder%s", f.Name),
 		}, f.Callback)
+	}
+
+	if manifest {
+		var b bytes.Buffer
+		fmt.Fprintf(&b, `" nvim-finder
+
+if exists('g:finder_manifest_loaded')
+    finish
+endif
+let g:finder_manifest_loaded = 1
+
+`)
+		b.Write(p.Manifest("finder"))
+		ioutil.WriteFile(manifestOutput, b.Bytes(), 0644)
+		os.Exit(0)
 	}
 
 	return nil

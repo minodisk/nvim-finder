@@ -1,3 +1,10 @@
+" nvim-finder
+
+if exists('g:finder_manifest_loaded')
+    finish
+endif
+let g:finder_manifest_loaded = 1
+
 call remote#host#RegisterPlugin('finder', '0', [
 \ {'type': 'command', 'name': 'Finder', 'sync': 1, 'opts': {'nargs': '0'}},
 \ {'type': 'function', 'name': 'FinderCloseAllPanes', 'sync': 1, 'opts': {}},

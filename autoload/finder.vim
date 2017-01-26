@@ -4,12 +4,12 @@ function! finder#trim(str) abort
     return substitute(a:str, '^[\s\r\n]*\(.\{-}\)[\s\r\n]*$', '\1', '')
 endfunction
 
-function! finder#uname() abort
-    return finder#trim(system('uname'))
+function! finder#system(str) abort
+    return finder#trim(system(a:str))
 endfunction
 
 function! finder#os() abort
-    let uname = finder#uname()
+    let uname = finder#system('uname')
     if uname[0:5] == 'Darwin'
         return 'darwin'
     endif
@@ -22,12 +22,20 @@ function! finder#os() abort
     return ''
 endfunction
 
-function! finder#binary(os) abort
-    let postfix = ''
-    if a:os == 'windows'
-        let postfix = '.exe'
+function! finder#is_64bit() abort
+    let arch = finder#system('arch')
+    return arch == 'x86_64' || arch == 'amd64'
+endfunction
+
+function! finder#binary() abort
+    if has('win64')
+        return 'finder_windows_amd64.exe'
+    if has('mac') && finder#is_64bit()
+        return 'finder_darwin_amd64'
+    if has('unix') && finder#os() == 'linux' && finder#is_64bit()
+        return 'finder_linux_amd64'
     endif
-    return 'finder_' . a:os . '_amd64' . postfix
+    throw "[finder] your OS/Arch isn't supported"
 endfunction
 
 exec 'source ' . expand('<sfile>:p:h') . '/finder/keymap.vim'
