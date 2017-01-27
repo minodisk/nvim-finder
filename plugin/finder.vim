@@ -9,7 +9,14 @@ let s:dir_plugin = expand('<sfile>:p:h') . '/finder'
 let s:dir_rplugin = expand('<sfile>:p:h:h') . '/rplugin/finder'
 
 function! s:jobstart(host) abort
-    let bin = s:dir_rplugin . '/bin/' . finder#binary()
+    try
+        let name = finder#binary()
+    catch
+        echomsg v:exception
+        return
+    endtry
+
+    let bin = s:dir_rplugin . '/bin/' . name
     return jobstart([bin], {'rpc': v:true})
 endfunction
 

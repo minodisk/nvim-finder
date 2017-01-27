@@ -8,8 +8,12 @@ function! finder#trim(str) abort
     return substitute(a:str, '^[\s\r\n]*\(.\{-}\)[\s\r\n]*$', '\1', '')
 endfunction
 
+function! finder#uname() abort
+    return finder#system('uname -a')
+endfunction
+
 function! finder#is_64bit(uname) abort
-    return a:uname =~ 'x84_64' || a:uname =~ 'amd64'
+    return a:uname =~ 'x86_64' || a:uname =~ 'amd64'
 endfunction
 
 function! finder#os(uname) abort
@@ -35,14 +39,15 @@ function! finder#os(uname) abort
 endfunction
 
 function! finder#binary() abort
-    let uname = finder#system('uname')
+    let uname = finder#uname()
     if !finder#is_64bit(uname)
-        throw "[finder] Only supports 64bit CPU, but `uname -a` says that the architecture of your machine isn't 64bit.\nThe result of `uname -a` is: \n" . uname
+        throw "[finder] only supports 64bit CPU"
+        return
     endif
 
     let os = finder#os(uname)
     if os == ''
-        throw "[finder] Only supports Darwin, FreeBSD, Linux, NetBSD, OpenBSD and Windows, but `uname -a` says that the OS of your machine is not one of them.\nThe result of `uname -a` is:\n" . uname
+        throw "[finder] only supports Darwin, FreeBSD, Linux, NetBSD, OpenBSD and Windows"
     endif
 
     let ext = ''
