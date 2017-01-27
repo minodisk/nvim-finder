@@ -1,116 +1,130 @@
 *finder.txt* File manager for NeoVim.
 
-==================================================
+==============================================================================
+CONTENTS 						*finder-contents*
 
-Contents *finder-contents*
+Commands       	|finder-commands|
+Functions      	|finder-functions|
+Variables 	|finder-variables|
+Keymaps        	|finder-keymaps|
 
-Commands       |finder-commands|
-Functions      |finder-functions|
-Keymaps        |finder-keymaps|
-Configurations |finder-configurations|
+================================================================================
+COMMANDS 						*finder-commands*
 
-==================================================
-Commands *finder-commands*
+:Finder 						*:Finder*
+		If no finder is open, open a new finder. And if at least one is
+		open, close them all.
 
-:Finder *:Finder*
-    If no finder is open, open a new finder. And if at least one is open, close them all.
+================================================================================
+FUNCTIONS 						*finder-functions*
 
-==================================================
-Functions *finder-functions*
+FinderTogglePane() 					*FinderTogglePane()*
+		If no finder is open, open a new finder.
+		And if at least one is open, close them all.
 
-FinderTogglePane() *FinderTogglePane()*
-    If no finder is open, open a new finder.
-    And if at least one is open, close them all.
+FinderOpenPane() 					*FinderOpenPane()*
+		Open new finder.
 
-FinderOpenPane() *FinderOpenPane()*
-    Open new finder.
+FinderClosePane() 					*FinderClosePane()*
+		Close a focused finder.
 
-FinderClosePane() *FinderClosePane()*
-    Close a focused finder.
+FinderCloseAllPanes() 					*FinderCloseAllPanes()*
+		Close all finders.
 
-FinderCloseAllPanes() *FinderCloseAllPanes()*
-    Close all finders.
+FinderGoToRoot() 					*FinderGoToRoot()*
+		Move to root directory.
 
-FinderGoToRoot() *FinderGoToRoot()*
-    Move to root directory.
+FinderGoToHome() 					*FinderGoToHome()*
+		Move to home directory.
 
-FinderGoToHome() *FinderGoToHome()*
-    Move to home directory.
+FinderGoToTrash() 					*FinderGoToTrash()*
+		Move to trash box. If remove file or directory with
+		|FinderRemove()|, they will be moved into here.
 
-FinderGoToTrash() *FinderGoToTrash()*
-    Move to trash box. If remove file or directory
-    with |FinderRemove()|, they will be moved into
-    here.
+FinderGoToProject()					*FinderGoToProject()*
+		Move to project root directory. The project root is determined
+		by the presence of file or directory defined with
+		|g:finder_project_regexp|.
 
-FinderGoToProject() *FinderGoToProject()*
-    Move to project root directory. The project root
-    is determined by the presence of file or directory
-    defined with |g:finder_project_regexp|.
+FinderGoToUpper() 					*FinderGoToUpper()*
+		Move to upper directory.
 
-FinderGoToUpper() *FinderGoToUpper()*
-    Move to upper directory.
+FinderGoToLowerOrOpen() 				*FinderGoToLowerOrOpen()*
+		If you are focusing on a directory, enter that directory,
+		and if you are focusing on a file, open that file.
 
-FinderGoToLowerOrOpen() *FinderGoToLowerOrOpen()*
-    If you are focusing on a directory, enter that directory,
-    and if you are focusing on a file, open that file.
+FinderGoTo() 						*FinderGoTo()*
+		Move to the path you entered.
 
-FinderGoTo() *FinderGoTo()*
-    Move to the path you entered.
+FinderSelect() 						*FinderSelect()*
+		Select the file or directory you are focusing on.
 
-FinderSelect() *FinderSelect()*
-    Select the file or directory you are focusing on.
+FinderReverseSelected() 				*FinderReverseSelected()*
+		Reverse the focus state of the displayed files or directories.
 
-FinderReverseSelected() *FinderReverseSelected()*
-    Reverse the focus state of the displayed files or directories.
+FinderToggle() 						*FinderToggle()*
+		Open the focused directory if it is closed,
+		close it if it is open.
 
-FinderToggle() *FinderToggle()*
-    Open the focused directory if it is closed,
-    close it if it is open.
+FinderToggleRecursively() 				*FinderToggleRecursively()*
+		Recursively open the focused directory if it is closed,
+		close it if it is open.
 
-FinderToggleRecursively() *FinderToggleRecursively()*
-    Recursively open the focused directory if it is closed,
-    close it if it is open.
+FinderCreateDir() 					*FinderCreateDir()*
+		Create directories under the focused directory.
 
-FinderCreateDir() *FinderCreateDir()*
-    Create directories under the focused directory.
+FinderCreateFile() 					*FinderCreateFile()*
+		Create files under the focused directory.
 
-FinderCreateFile() *FinderCreateFile()*
-    Create files under the focused directory.
+FinderRename() 						*FinderRename()*
+		Rename selected or focused files and directories.
 
-FinderRename() *FinderRename()*
-    Rename selected or focused files and directories.
+FinderMove() 						*FinderMove()*
+		Move selected or focused files and directories.
 
-FinderMove() *FinderMove()*
-    Move selected or focused files and directories.
+FinderOpenExternally() 					*FinderOpenExternally()*
+		Open selected or focused files and directories
+		with the associated application of the OS.
 
-FinderOpenExternally() *FinderOpenExternally()*
-    Open selected or focused files and directories
-    with the associated application of the OS.
+FinderOpenDirExternally() 				*FinderOpenDirExternally()*
+		Open selected or focused directories
+		with the associated application of the OS.
 
-FinderOpenDirExternally() *FinderOpenDirExternally()*
-    Open selected or focused directories
-    with the associated application of the OS.
+FinderRemovePermanently() 				*FinderRemovePermanently()*
+		Remove selected or focused files and directories
+		permanently. They can't be restored.
 
-FinderRemovePermanently() *FinderRemovePermanently()*
-    Remove selected or focused files and directories
-    permanently. They can't be restored.
+FinderRemove() 						*FinderRemove()*
+		Remove selected or focused files and directories
+		into trash box. Go to trash box with |FinderGoToTrash()|
+		and restore them with |FinderRestore()|.
 
-FinderRemove() *FinderRemove()*
-    Remove selected or focused files and directories
-    into trash box. Go to trash box with |FinderGoToTrash()|
-    and restore them with |FinderRestore()|.
+FinderRestore() 					*FinderRestore()*
+		Restore removed files and directories with |FinderRemove()|.
 
-FinderRestore() *FinderRestore()*
-    Restore removed files and directories with |FinderRemove()|.
+FinderShowCopiedList() 					*FinderShowCopiedList()*
+		Show the list of paths in the clipboard copied with
+		|FinderCopy()|.
 
-FinderShowCopiedList() *FinderShowCopiedList()*
-    Show the list of paths in the clipboard copied with |FinderCopy()|.
+FinderCopy() 						*FinderCopy()*
+		Copy selected or focused files and directories to the clipboard.
 
-FinderCopy() *FinderCopy()*
-    Copy selected or focused files and directories to the clipboard.
+FinderPaste() 						*FinderPaste()*
+		Paste the files and directories in clipboard copied with
+		|FinderCopy()|.
 
-FinderPaste() *FinderPaste()*
-    Paste the files and directories in clipboard copied with |FinderCopy()|.
+FinderYank() 						*FinderYank()*
+		Yank the full path of focused or selected files and directories.
 
-FinderYank() *FinderYank()*
-    Yank the full path of focused or selected files and directories.
+================================================================================
+VARIABLES						*finder-variables*
+
+g:finder_project_regexp    				*g:finder_project_regexp*
+		A directory containing files and folders matching this regular
+		expression is regarded as a project root.
+		When |FinderGoToProject()| is executed, it goes upper from the
+		directory currently being displayed to the directory containing
+		this file and folder.
+
+================================================================================
+KEYMAPS							*finder-keymaps*
