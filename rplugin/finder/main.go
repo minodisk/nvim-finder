@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	caseconv "github.com/minodisk/go-caseconv"
 	cnvim "github.com/neovim/go-client/nvim"
 	cplugin "github.com/neovim/go-client/nvim/plugin"
 )
@@ -184,6 +185,12 @@ func main() {
 
 func printKeymap(path string) {
 	var b bytes.Buffer
+
+	for _, f := range Functions {
+		fmt.Fprintf(&b, "noremap <Plug>(finder-%s) :<C-u>call Finder%s()<CR>\n", caseconv.LowerHyphens(f.Name), f.Name)
+	}
+	fmt.Fprintf(&b, "\n")
+
 	fmt.Fprintf(&b, "augroup finder\n")
 	fmt.Fprintf(&b, "  autocmd!\n")
 	for _, f := range Functions {
@@ -191,7 +198,7 @@ func printKeymap(path string) {
 			continue
 		}
 		for _, k := range f.Keymaps {
-			fmt.Fprintf(&b, "  autocmd FileType finder nnoremap <buffer> %s :<C-u>call Finder%s()<CR>\n", k, f.Name)
+			fmt.Fprintf(&b, "  autocmd FileType finder nnoremap <buffer> %s <Plug>(finder-%s)<CR>\n", k, caseconv.LowerHyphens(f.Name))
 		}
 	}
 	fmt.Fprintf(&b, "augroup END\n")

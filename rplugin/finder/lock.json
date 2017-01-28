@@ -1,10 +1,18 @@
 {
-    "memo": "7338958bcd3dad99e2ea740f9a60881cc1b5b9a1dc323cec7425952a0eca46b3",
+    "memo": "fbe2db90a0f7327ef110999629f7eefb95fba5298ac07301e01c2e9417757a0d",
     "projects": [
         {
             "name": "github.com/mattn/natural",
             "branch": "master",
             "revision": "6b2ca5c8eb9a3bbc5a04c30324d87879a92067e9",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/minodisk/go-caseconv",
+            "branch": "master",
+            "revision": "d30557befec39079e0165431aebc602e37a6c719",
             "packages": [
                 "."
             ]
