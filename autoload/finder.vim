@@ -57,7 +57,7 @@ endfunction
 
 function! finder#download(path) abort
     let bin = finder#binary('finder')
-    let cmd = finder#download('https://github.com/minodisk/go-nvim-finder/releases/download/v0.0.1/' . bin, a:path)
+    let cmd = finder#_download('https://github.com/minodisk/go-nvim-finder/releases/download/v0.0.1/' . bin, a:path)
     echomsg cmd
     system(cmd)
 endfunction
