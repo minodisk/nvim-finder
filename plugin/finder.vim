@@ -12,6 +12,11 @@ function! s:jobstart(host) abort
   echomsg path
   return jobstart([path], {'rpc': v:true})
 endfunction
+
 call remote#host#Register('finder', 'x', function('s:jobstart'))
+
+function! FinderDownloadBinary() abort
+  finder#download()
+endfunction
 
 exec 'source ' . s:dir_plugin . '/manifest.vim'
