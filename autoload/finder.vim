@@ -1,5 +1,10 @@
 " nvim-finder
 
+let s:dir_rplugin = expand('<sfile>:p:h') . '/finder'
+let s:rplugin = s:dir_rplugin . '/bin/nvim-finder'
+
+echo a:rplugin
+
 function! finder#system(str) abort
     return finder#trim(system(a:str))
 endfunction
@@ -55,13 +60,13 @@ function! finder#binary(name) abort
     return a:name . '_' . os . '_amd64' . ext
 endfunction
 
-function! finder#download(path) abort
+function! finder#download() abort
     let bin = finder#binary('finder')
     let tag = finder#system('git describe --tags --abbrev=0')
-    call system('wget -O ' . a:path . ' https://github.com/minodisk/go-nvim-finder/releases/download/' . tag . '/' . bin)
-    call system('chmod a+x ' . a:path)
+    call system('wget -O ' . s:rplugin . ' https://github.com/minodisk/go-nvim-finder/releases/download/' . tag . '/' . bin)
+    call system('chmod a+x ' . s:rplugin)
 endfunction
 
-exec 'source ' . expand('<sfile>:p:h') . '/finder/keymap.vim'
+exec 'source ' . s:dir_rplugin . '/keymap.vim'
 
 " vim:ts=4:sw=4:et
