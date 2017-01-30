@@ -58,6 +58,7 @@ endfunction
 function! finder#download(path) abort
     let bin = finder#binary('finder')
     call system('wget -O ' . a:path . ' https://github.com/minodisk/go-nvim-finder/releases/download/v0.0.1/' . bin)
+    call system('chmod a+x ' . a:path)
 endfunction
 
 exec 'source ' . expand('<sfile>:p:h') . '/finder/keymap.vim'
