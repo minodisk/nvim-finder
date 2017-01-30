@@ -3,7 +3,7 @@
 let s:dir_rplugin = expand('<sfile>:p:h') . '/finder'
 let s:rplugin = s:dir_rplugin . '/bin/nvim-finder'
 
-echo a:rplugin
+echo s:rplugin
 
 function! finder#system(str) abort
     return finder#trim(system(a:str))
