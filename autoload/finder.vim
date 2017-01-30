@@ -1,8 +1,5 @@
 " nvim-finder
 
-function! finder#autoload() abort
-endfunction
-
 function! finder#system(str) abort
     return finder#trim(system(a:str))
 endfunction
@@ -20,22 +17,22 @@ function! finder#is_64bit(uname) abort
 endfunction
 
 function! finder#os(uname) abort
-    if a:uname =~ 'darwin'
+    if a:uname =~ 'Darwin'
         return 'darwin'
     endif
-    if a:uname =~ 'freebsd'
+    if a:uname =~ 'FreeBSD'
         return 'freebsd'
     endif
-    if a:uname =~ 'linux'
+    if a:uname =~ 'Linux'
         return 'linux'
     endif
-    if a:uname =~ 'netbsd'
+    if a:uname =~ 'NetBSD'
         return 'netbsd'
     endif
-    if a:uname =~ 'openbsd'
+    if a:uname =~ 'OpenBSD'
         return 'openbsd'
     endif
-    if a:uname=~ 'windows' || a:uname =~ 'mingw32_nt'
+    if a:uname=~ 'Windows' || a:uname =~ 'MINGW32_NT'
         return 'windows'
     endif
     return ''
@@ -44,12 +41,12 @@ endfunction
 function! finder#binary(name) abort
     let uname = finder#uname()
     if !finder#is_64bit(uname)
-        throw "[finder] only supports 64bit cpu"
+        throw "[finder] only supports 64bit CPU"
         return
     endif
     let os = finder#os(uname)
     if os == ''
-        throw "[finder] only supports darwin, freebsd, linux, netbsd, openbsd and windows"
+        throw "[finder] only supports Darwin, FreeBSD, Linux, NetBSD, OpenBSD and Windows"
     endif
     let ext = ''
     if os == 'windows'
@@ -64,3 +61,5 @@ function! finder#download(path) abort
 endfunction
 
 exec 'source ' . expand('<sfile>:p:h') . '/finder/keymap.vim'
+
+" vim:ts=4:sw=4:et
