@@ -13,4 +13,6 @@ function! s:jobstart(host) abort
 endfunction
 call remote#host#Register('finder', 'x', function('s:jobstart'))
 
+command! FinderInstallBinary :call finder#download('~/bin/nvim-finder')
+
 exec 'source ' . s:dir_plugin . '/manifest.vim'
