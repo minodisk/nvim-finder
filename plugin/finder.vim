@@ -12,7 +12,7 @@ let s:rplugin = s:dir_rplugin . '/bin/nvim-finder'
 echo s:rplugin
 
 function! s:jobstart(host) abort
-  return jobstart([s:rplugin)], {'rpc': v:true})
+  return jobstart([s:rplugin], {'rpc': v:true})
 endfunction
 call remote#host#Register('finder', 'x', function('s:jobstart'))
 
