@@ -1,5 +1,6 @@
 " nvim-finder
 
+let s:tag = 'v0.0.1'
 let s:dir_rplugin = expand('<sfile>:p:h') . '/finder'
 let s:rplugin = s:dir_rplugin . '/nvim-finder'
 
@@ -63,9 +64,8 @@ function! finder#binary(name) abort
 endfunction
 
 function! finder#download() abort
-    let tag = finder#system('git describe --tags --abbrev=0')
     let bin = finder#binary('finder')
-    echo finder#system('wget -O ' . s:rplugin . ' https://github.com/minodisk/go-nvim-finder/releases/download/' . tag . '/' . bin)
+    echo finder#system('wget -O ' . s:rplugin . ' https://github.com/minodisk/go-nvim-finder/releases/download/' . s:tag . '/' . bin)
     echo finder#system('chmod a+x ' . s:rplugin)
 endfunction
 
