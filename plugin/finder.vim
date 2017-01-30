@@ -8,7 +8,9 @@ let g:finder_loaded = 1
 let s:dir_plugin = expand('<sfile>:p:h') . '/finder'
 
 function! s:jobstart(host) abort
-  return jobstart([s:rplugin], {'rpc': v:true})
+  let path = finder#rplugin()
+  echomsg path
+  return jobstart([path], {'rpc': v:true})
 endfunction
 call remote#host#Register('finder', 'x', function('s:jobstart'))
 
