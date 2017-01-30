@@ -18,5 +18,6 @@ call remote#host#Register('finder', 'x', function('s:jobstart'))
 function! FinderDownloadBinary() abort
   call finder#download()
 endfunction
+command! FinderInstallBinary :call finder#download()
 
 exec 'source ' . s:dir_plugin . '/manifest.vim'
