@@ -57,7 +57,8 @@ endfunction
 
 function! finder#download(path) abort
     let bin = finder#binary('finder')
-    call system('wget -O ' . a:path . ' https://github.com/minodisk/go-nvim-finder/releases/download/v0.0.1/' . bin)
+    let tag = finder#system('git describe --tags --abbrev=0')
+    call system('wget -O ' . a:path . ' https://github.com/minodisk/go-nvim-finder/releases/download/' . tag . '/' . bin)
     call system('chmod a+x ' . a:path)
 endfunction
 

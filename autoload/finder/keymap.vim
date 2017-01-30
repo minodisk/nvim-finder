@@ -27,8 +27,8 @@ noremap <Plug>(finder-copy) :<C-u>call FinderCopy()<CR>
 noremap <Plug>(finder-paste) :<C-u>call FinderPaste()<CR>
 noremap <Plug>(finder-yank) :<C-u>call FinderYank()<CR>
 
-" augroup finder
-"   autocmd!
+augroup finder
+  autocmd!
   autocmd FileType finder nnoremap <buffer> q <Plug>(finder-close-pane)<CR>
   autocmd FileType finder nnoremap <buffer> Q <Plug>(finder-close-all-panes)<CR>
   autocmd FileType finder nnoremap <buffer> \ <Plug>(finder-go-to-root)<CR>
@@ -57,4 +57,4 @@ noremap <Plug>(finder-yank) :<C-u>call FinderYank()<CR>
   autocmd FileType finder nnoremap <buffer> c <Plug>(finder-copy)<CR>
   autocmd FileType finder nnoremap <buffer> p <Plug>(finder-paste)<CR>
   autocmd FileType finder nnoremap <buffer> y <Plug>(finder-yank)<CR>
-" augroup END
+augroup END
