@@ -1,5 +1,8 @@
 " nvim-finder
 
+function! finder#autoload() abort
+endfunction
+
 function! finder#system(str) abort
     return finder#trim(system(a:str))
 endfunction
