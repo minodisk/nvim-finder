@@ -63,7 +63,7 @@ function! finder#binary(name) abort
 endfunction
 
 function! finder#download() abort
-    let bin = finder#binary('finder')
+    let bin = finder#binary('nvim-finder')
     echo finder#system('wget -O ' . s:rplugin . ' https://github.com/minodisk/nvim-finder-rplugin/releases/download/v' . g:finder_version . '/' . bin)
     echo finder#system('chmod a+x ' . s:rplugin)
 endfunction
