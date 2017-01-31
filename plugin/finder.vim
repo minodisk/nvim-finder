@@ -5,8 +5,6 @@ if exists('g:finder_loaded')
 endif
 let g:finder_loaded = 1
 
-let s:dir_plugin = expand('<sfile>:p:h') . '/finder'
-
 function! s:jobstart(host) abort
   let path = finder#rplugin()
   echomsg path
@@ -20,4 +18,6 @@ function! FinderDownloadBinary() abort
 endfunction
 command! FinderInstallBinary :call finder#download()
 
+let s:dir_plugin = expand('<sfile>:p:h') . '/finder'
 exec 'source ' . s:dir_plugin . '/manifest.vim'
+exec 'source ' . s:dir_plugin . '/version.vim'
