@@ -8,6 +8,6 @@ File manager for NeoVim.
 
 init.vim:
 
-```vimscript
+```vim
 Plug 'minodisk/nvim-finder', { 'do': ':FinderInstallBinary' }
 ```
